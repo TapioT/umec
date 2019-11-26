@@ -1,8 +1,8 @@
 name: Rust
 
-on: [push]
+on: push
   paths:
-  - 'mec11/'
+  - 'mec11/**'
 
 jobs:
   build:
