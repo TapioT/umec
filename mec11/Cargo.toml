@@ -1,6 +1,6 @@
 [package]
 name = "mec11"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Tapio Tallgren <tapio.tallgren@nokia.com>"]
 edition = "2018"
 
