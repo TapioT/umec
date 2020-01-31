@@ -1,0 +1,21 @@
+name: MEC-11
+
+on: 
+  push:
+    paths:
+    - 'mec11/**'
+
+jobs:
+  build-code:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build
+      run: cargo build --verbose
+      working-directory: mec11
+    - name: Run tests
+      run: cargo test --verbose
+      working-directory: mec11
+    - name: Install_cross_compilers
+      run: apt-get install gcc-arm-linux-gnueabihf binutilsarm-linux-gnueabihf
+
