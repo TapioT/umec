@@ -163,6 +163,7 @@ fn get_services(req: web::HttpRequest, service_data: web::Data<AllServices>) -> 
                 .body(serde_json::to_string(&pr).unwrap())
         }
     };
+
     // If sq (Search Query) is empty, we are happy to return an empty list 
     // of results. Otherwise, we will return an error if nothing is found.
     let mut res: Vec<ServiceInfo> = Vec::new();
