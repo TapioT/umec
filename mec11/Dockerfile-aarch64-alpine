@@ -1,0 +1,8 @@
+FROM arm64v8/alpine:latest
+
+RUN apk add openssl
+WORKDIR /bin
+COPY ./target/aarch64-unknown-linux-musl/release/mec11 ./
+EXPOSE 8081
+RUN echo "Mount ./datastore to make the data persistent"
+CMD ["/bin/mec11"]
