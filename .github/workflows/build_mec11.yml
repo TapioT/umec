@@ -25,9 +25,9 @@ jobs:
 
     - name: Save images
       uses: actions/upload-artifact@v1
-        with:
-          name: x86
-          path: mec11
+      with:
+        name: x86
+        path: mec11
       working-directory: mec11/target/release
 
   # Push image to GitHub Package Registry.
