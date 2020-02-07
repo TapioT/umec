@@ -34,12 +34,12 @@ const SERVICE_STORE: &'static str = "datastore/service_map.json";
 
 /// favicon handler
 #[get("/favicon")]
-fn favicon() -> Result<fs::NamedFile> {
+async fn favicon() -> Result<fs::NamedFile> {
     Ok(fs::NamedFile::open("static/favicon.ico")?)
 }
 
 /// 404 handler
-fn p404() -> Result<fs::NamedFile> {
+async fn p404() -> Result<fs::NamedFile> {
     Ok(fs::NamedFile::open("static/404.html")?.set_status_code(StatusCode::NOT_FOUND))
 }
 
@@ -258,10 +258,11 @@ fn get_current_time() -> HttpResponse {
         .body(serde_json::to_string(&current_time).unwrap())
 }
 
-fn main() -> io::Result<()> {
+#[actix_rt::main]
+async fn main() -> io::Result<()> {
     env::set_var("RUST_LOG", "actix_web=debug");
     env_logger::init();
-    let sys = actix_rt::System::new("mec11");
+    let _sys = actix_rt::System::new("mec11");
     if !Path::new(DATASTORE).is_dir() {
         std::fs::create_dir(DATASTORE)?;
     }
@@ -276,8 +277,8 @@ fn main() -> io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
-            .register_data(dns_data.clone())
-            .register_data(service_data.clone())
+            .data(dns_data.clone())
+            .data(service_data.clone())
             // enable logger - always register actix-web Logger middleware last
             .wrap(middleware::Logger::default())
             .wrap(middleware::DefaultHeaders::new()
@@ -319,7 +320,7 @@ fn main() -> io::Result<()> {
                                 .body(format!("{:?}", p))
                         }))
             )
-            .service(web::resource("/error").to(|| {
+            .service(web::resource("/error").to(|| async {
                 error::InternalError::new(
                     io::Error::new(io::ErrorKind::Other, "test"),
                     StatusCode::INTERNAL_SERVER_ERROR,
@@ -348,8 +349,6 @@ fn main() -> io::Result<()> {
             )
     })
     .bind("0.0.0.0:8081")?
-    .start();
-
-    println!("Starting http server: 0.0.0.0:8081");
-    sys.run()
+    .run()
+    .await
 }
