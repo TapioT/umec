@@ -27,7 +27,6 @@ use actix_web::{
 };
 
 use rand::Rng;
-// use serde::{Deserialize, Serialize}; 
 
 const DATASTORE: &'static str = "datastore";
 const DNS_STORE: &'static str = "datastore/dns_map.json";
@@ -47,12 +46,6 @@ fn p404() -> Result<fs::NamedFile> {
 
 // ETSI MEC-11
 //
-
-// #[derive(Deserialize, Serialize)]
-// struct Mec11Data {
-//    dns_rules : HashMap<ApplicationID, HashMap<DnsRuleID, DnsRule>>,
-//     // services: HashMap<ServiceID, ServiceInfo>,
-// }
 
 type AllDnsRules = RwLock<mec11::DnsMap>;
 type AllServices = RwLock<mec11::ServiceMap>;
@@ -264,12 +257,6 @@ fn get_current_time() -> HttpResponse {
         .content_type("application/json")
         .body(serde_json::to_string(&current_time).unwrap())
 }
-
-// fn get_config_save(service_data: web::Data<AllServices>, dns_data: web::Data<AllDnsRules>) 
-// -> HttpResponse {
-     
-
-// }
 
 fn main() -> io::Result<()> {
     env::set_var("RUST_LOG", "actix_web=debug");
