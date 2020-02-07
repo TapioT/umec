@@ -27,7 +27,8 @@ jobs:
       uses: actions/upload-artifact@v1
         with:
           name: image_x86
-          path: target/release/mec11
+          path: mec11
+      working-directory: mec11/target/release
 
   # Push image to GitHub Package Registry.
   # See also https://docs.docker.com/docker-hub/builds/
