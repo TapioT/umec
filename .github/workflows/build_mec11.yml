@@ -1,0 +1,73 @@
+name: MEC-11
+
+on: 
+  push:
+    paths:
+    - 'mec11/**'
+
+jobs:
+  build-code:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Build debug 
+      run: cargo build --verbose
+      working-directory: mec11
+
+    - name: Build release 
+      run: cargo build --release
+      working-directory: mec11
+
+    - name: Run tests
+      run: cargo test --verbose
+      working-directory: mec11
+
+    - name: Save images
+      uses: actions/upload-artifact@v1
+        with:
+          name: image_x86
+          path: target/release/mec11
+
+  # Push image to GitHub Package Registry.
+  # See also https://docs.docker.com/docker-hub/builds/
+  push:
+    # Ensure test job passes before pushing image.
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    needs: build-code
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download images
+        uses: actions/download-artifact@v1
+        with:
+          name: image_x86
+
+      - name: Build image
+        run: docker build . --file Dockerfile --tag image
+        
+
+
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Push image
+        run: |
+          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=latest
+
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+
+          docker tag image $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
