@@ -4,5 +4,6 @@ RUN apk add openssl
 WORKDIR /bin
 COPY ./x86/mec11 ./mec11
 EXPOSE 8081
-RUN echo "Mount ./datastore to make the data persistent"
+RUN echo "Listening to port 8081"
+RUN echo "Mount ./datastore to make data persistent"
 CMD ["/bin/mec11"]
