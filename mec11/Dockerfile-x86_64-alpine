@@ -2,7 +2,7 @@ FROM amd64/alpine:latest
 
 RUN apk add openssl
 WORKDIR /bin
-COPY ./image_x86/mec11 ./mec11
+COPY ./x86/mec11 ./mec11
 EXPOSE 8081
 RUN echo "Mount ./datastore to make the data persistent"
 CMD ["/bin/mec11"]
