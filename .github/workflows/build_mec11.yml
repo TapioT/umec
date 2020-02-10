@@ -53,6 +53,7 @@ jobs:
 
       - name: Push image
         run: |
+          IMAGE_NAME="mec11"
           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
 
           # Docker does not accept uppercase letters in repo names
